@@ -1,104 +1,1596 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>数字媒体管理与古典破译交互实验工坊</title>
-    <style>
-        * { box-sizing: border-box; }
-        body {
-            margin: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background: #11141a;
-            color: #ffffff;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-        header {
-            text-align: center;
-            padding: 40px 20px;
-            background: linear-gradient(180deg, #1f2532 0%, #11141a 100%);
-        }
-        header h1 { margin: 0; font-size: 2.5rem; color: #4fc3f7; }
-        header p { color: #8a99ad; margin-top: 10px; }
-        
-        .container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: stretch;
-            max-width: 1200px;
-            margin: 40px auto;
-            padding: 0 20px;
-            gap: 30px;
-            flex: 1;
-        }
-        .card {
-            background: #1c2331;
-            border: 1px solid #2e3b52;
-            border-radius: 12px;
-            width: calc(50% - 15px);
-            min-width: 300px;
-            padding: 40px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            transition: transform 0.3s, border-color 0.3s;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-            border-color: #4fc3f7;
-        }
-        .card.media { border-top: 5px solid #00e676; }
-        .card.crypto { border-top: 5px solid #ff9100; }
-        
-        .card h2 { margin-top: 0; font-size: 1.8rem; }
-        .card p { color: #b0bec5; line-height: 1.6; }
-        
-        .btn {
-            display: inline-block;
-            padding: 12px 24px;
-            background: #4fc3f7;
-            color: #11141a;
-            text-decoration: none;
-            border-radius: 6px;
-            font-weight: bold;
-            text-align: center;
-            margin-top: 20px;
-            transition: background 0.2s;
-        }
-        .btn:hover { background: #81d4fa; }
-        .media .btn { background: #00e676; color: #11141a; }
-        .media .btn:hover { background: #66ffa6; }
-        .crypto .btn { background: #ff9100; color: #11141a; }
-        .crypto .btn:hover { background: #ffb74d; }
-    </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>古典密码与现代密码交互案例</title>
+  <style>
+    :root {
+      --ink: #1e1a15;
+      --muted: #6f6252;
+      --paper: #fffaf0;
+      --paper-2: #f4e6cf;
+      --copper: #a06032;
+      --blue: #2f6176;
+      --green: #557247;
+      --red: #9b4a35;
+      --line: rgba(88, 67, 45, 0.24);
+      --shadow: 0 20px 64px rgba(56, 38, 20, 0.15);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: "Songti SC", "STSong", "SimSun", serif;
+      background:
+        radial-gradient(circle at 10% 8%, rgba(160, 96, 50, 0.22), transparent 28rem),
+        radial-gradient(circle at 86% 12%, rgba(47, 97, 118, 0.18), transparent 30rem),
+        linear-gradient(135deg, #ead8bd 0%, #fbf1df 45%, #e3c7a5 100%);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.18;
+      background-image:
+        linear-gradient(rgba(88, 67, 45, 0.10) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(88, 67, 45, 0.10) 1px, transparent 1px);
+      background-size: 32px 32px;
+      mask-image: linear-gradient(to bottom, black, transparent 82%);
+    }
+
+    .shell {
+      width: min(1420px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 24px 0 42px;
+    }
+
+    header {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      padding: clamp(24px, 3.8vw, 42px);
+      background:
+        linear-gradient(135deg, rgba(255, 250, 240, 0.95), rgba(244, 232, 210, 0.86)),
+        repeating-linear-gradient(90deg, transparent 0 18px, rgba(160, 96, 50, 0.055) 18px 19px);
+      box-shadow: var(--shadow);
+    }
+
+    header::after {
+      content: "A1 B7 3F 90 2C";
+      position: absolute;
+      right: -20px;
+      bottom: -24px;
+      color: rgba(47, 97, 118, 0.08);
+      font: 800 clamp(42px, 10vw, 126px) "STHeiti", "PingFang SC", sans-serif;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      padding: 7px 12px;
+      border: 1px solid rgba(160, 96, 50, 0.32);
+      border-radius: 999px;
+      color: #684224;
+      background: rgba(255, 255, 255, 0.52);
+      font: 700 13px "STHeiti", "PingFang SC", sans-serif;
+      letter-spacing: 0.08em;
+    }
+
+    h1 {
+      position: relative;
+      z-index: 1;
+      max-width: 920px;
+      margin: 18px 0 12px;
+      font-size: clamp(30px, 4.2vw, 52px);
+      line-height: 1.08;
+      letter-spacing: -0.035em;
+    }
+
+    .lead {
+      position: relative;
+      z-index: 1;
+      max-width: 940px;
+      margin: 0;
+      color: #4b4036;
+      font-size: clamp(16px, 1.6vw, 19px);
+      line-height: 1.82;
+    }
+
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .pill {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 8px 12px;
+      background: rgba(255, 255, 255, 0.52);
+      color: var(--muted);
+      font: 700 13px "STHeiti", "PingFang SC", sans-serif;
+    }
+
+    main {
+      display: grid;
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .case-card {
+      border: 1px solid var(--line);
+      border-radius: 26px;
+      padding: clamp(18px, 2.2vw, 28px);
+      background: rgba(255, 250, 240, 0.93);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .case-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 16px;
+      align-items: start;
+      margin-bottom: 16px;
+    }
+
+    h2 {
+      margin: 0;
+      font: 800 clamp(23px, 2.2vw, 34px) "STHeiti", "PingFang SC", sans-serif;
+      letter-spacing: -0.02em;
+    }
+
+    .case-head p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      line-height: 1.72;
+      font-size: 15px;
+    }
+
+    .tag {
+      align-self: start;
+      white-space: nowrap;
+      padding: 8px 12px;
+      border-radius: 14px;
+      color: white;
+      background: var(--blue);
+      font: 800 13px "STHeiti", "PingFang SC", sans-serif;
+      letter-spacing: 0.05em;
+    }
+
+    .media-lab {
+      display: grid;
+      grid-template-columns: minmax(290px, 0.9fr) minmax(360px, 1.15fr) minmax(300px, 0.95fr);
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    .modern-panel {
+      grid-column: 1 / -1;
+    }
+
+    .modern-lab-grid {
+      display: grid;
+      grid-template-columns: minmax(280px, 0.9fr) minmax(340px, 1fr) minmax(340px, 1fr);
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .modern-flow {
+      grid-template-columns: repeat(5, minmax(120px, 1fr));
+    }
+
+    .lab-panel,
+    .tool-panel {
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 15px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.68), rgba(249, 237, 219, 0.80));
+    }
+
+    .lab-panel h3,
+    .tool-panel h3 {
+      margin: 0;
+      font: 800 18px "STHeiti", "PingFang SC", sans-serif;
+      color: #3c2d21;
+    }
+    .panel-title {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 10px;
+    }
+    .info-dot {
+      width: 22px;
+      height: 22px;
+      border: 1px solid rgba(47, 97, 118, 0.38);
+      border-radius: 50%;
+      display: inline-grid;
+      place-items: center;
+      background: #fff7ea;
+      color: var(--blue);
+      cursor: help;
+      font: 900 13px "STHeiti", "PingFang SC", sans-serif;
+    }
+    .tip {
+      position: absolute;
+      z-index: 8;
+      left: 0;
+      top: 30px;
+      width: min(360px, 86vw);
+      border: 1px solid rgba(47, 97, 118, 0.32);
+      border-radius: 14px;
+      padding: 10px 12px;
+      background: rgba(31, 27, 22, 0.94);
+      color: #fff3dc;
+      box-shadow: 0 18px 40px rgba(31, 27, 22, 0.22);
+      font-size: 13px;
+      line-height: 1.58;
+      opacity: 0;
+      transform: translateY(-4px);
+      pointer-events: none;
+      transition: opacity 140ms ease, transform 140ms ease;
+    }
+    .info-dot:hover + .tip,
+    .info-dot:focus + .tip {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .control-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    label {
+      color: var(--muted);
+      font: 700 13px "STHeiti", "PingFang SC", sans-serif;
+    }
+
+    input,
+    select {
+      min-height: 36px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 7px 10px;
+      background: #fffaf2;
+      color: var(--ink);
+      font: inherit;
+    }
+
+    input[type="number"] { width: 78px; }
+
+    button {
+      font: inherit;
+    }
+
+    .action,
+    .stage-button,
+    .threat-button {
+      cursor: pointer;
+      transition: transform 160ms ease, filter 160ms ease, border-color 160ms ease, background 160ms ease;
+    }
+
+    .action {
+      border: 0;
+      border-radius: 12px;
+      padding: 9px 12px;
+      color: white;
+      background: var(--copper);
+      font: 800 13px "STHeiti", "PingFang SC", sans-serif;
+    }
+    .action.secondary {
+      color: #4b3828;
+      background: #ead9bd;
+      border: 1px solid rgba(160, 96, 50, 0.24);
+    }
+
+    .action:hover,
+    .stage-button:hover,
+    .threat-button:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.03);
+    }
+
+    .pipeline {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 9px;
+      margin-bottom: 12px;
+    }
+
+    .pipe-node {
+      min-height: 76px;
+      border: 1px solid rgba(47, 97, 118, 0.22);
+      border-radius: 16px;
+      padding: 11px;
+      background: rgba(255, 255, 255, 0.62);
+    }
+
+    .pipe-node.done {
+      border-color: rgba(85, 114, 71, 0.72);
+      background: rgba(226, 241, 215, 0.82);
+    }
+
+    .pipe-node.active {
+      outline: 3px solid rgba(160, 96, 50, 0.22);
+      border-color: rgba(160, 96, 50, 0.76);
+      background: #fff0d3;
+    }
+
+    .pipe-node b {
+      display: block;
+      margin-bottom: 5px;
+      font: 800 14px "STHeiti", "PingFang SC", sans-serif;
+    }
+
+    .pipe-node small {
+      color: var(--muted);
+      line-height: 1.46;
+    }
+
+    .output-stack {
+      display: grid;
+      gap: 9px;
+    }
+
+    .output-box,
+    .cipher-output {
+      min-height: 58px;
+      border-radius: 16px;
+      padding: 11px;
+      background: #211a13;
+      color: #ffe9bf;
+      font-family: "Menlo", "Consolas", monospace;
+      line-height: 1.55;
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
+    }
+
+    .output-box.light {
+      background: rgba(255,255,255,0.62);
+      color: #3c332a;
+      font-family: "Songti SC", "STSong", "SimSun", serif;
+    }
+
+    .threat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .threat-button {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 10px;
+      background: #fff7ea;
+      text-align: left;
+      color: var(--ink);
+      font: 800 13px "STHeiti", "PingFang SC", sans-serif;
+    }
+
+    .threat-button.active {
+      border-color: rgba(155, 74, 53, 0.70);
+      background: rgba(255, 224, 213, 0.88);
+    }
+
+    .risk-card {
+      min-height: 116px;
+      border: 1px solid rgba(155, 74, 53, 0.25);
+      border-radius: 18px;
+      padding: 13px;
+      background: rgba(255,255,255,0.64);
+      line-height: 1.65;
+      color: #4d4035;
+    }
+    .risk-card.response {
+      min-height: 88px;
+      margin-top: 8px;
+      border-color: rgba(47, 97, 118, 0.25);
+      background: rgba(232, 242, 247, 0.72);
+    }
+
+    .audit-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .audit-item {
+      border-left: 4px solid var(--green);
+      border-radius: 12px;
+      padding: 8px 10px;
+      background: rgba(255,255,255,0.64);
+      color: #3e352d;
+      line-height: 1.45;
+      font-size: 14px;
+    }
+
+    .lab-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .challenge-panel {
+      border: 1px solid rgba(47, 97, 118, 0.24);
+      border-radius: 22px;
+      padding: 15px;
+      margin-bottom: 14px;
+      background:
+        radial-gradient(circle at 88% 16%, rgba(47, 97, 118, 0.10), transparent 180px),
+        linear-gradient(135deg, rgba(255,255,255,0.72), rgba(245, 232, 209, 0.82));
+    }
+    .challenge-layout {
+      display: grid;
+      grid-template-columns: 0.78fr 1.22fr 0.82fr;
+      gap: 12px;
+      align-items: stretch;
+    }
+    .challenge-buttons {
+      display: grid;
+      gap: 8px;
+    }
+    .challenge-button {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 10px;
+      background: #fff7ea;
+      color: var(--ink);
+      text-align: left;
+      cursor: pointer;
+      font: 800 13px "STHeiti", "PingFang SC", sans-serif;
+    }
+    .challenge-button.active {
+      border-color: rgba(47, 97, 118, 0.62);
+      background: rgba(226, 241, 247, 0.86);
+    }
+    .challenge-card {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 12px;
+      background: rgba(255,255,255,0.64);
+    }
+    .challenge-title-line {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 8px;
+    }
+    .challenge-card h4 {
+      margin: 0;
+      font: 800 16px "STHeiti", "PingFang SC", sans-serif;
+    }
+    .challenge-cipher {
+      min-height: 56px;
+      margin: 8px 0;
+      border-radius: 14px;
+      padding: 10px;
+      background: #211a13;
+      color: #ffe9bf;
+      font-family: "Menlo", "Consolas", monospace;
+      line-height: 1.5;
+      white-space: pre-wrap;
+    }
+    .score-ring {
+      min-height: 100%;
+      border: 1px solid rgba(160, 96, 50, 0.24);
+      border-radius: 16px;
+      padding: 12px;
+      background: rgba(255, 247, 234, 0.78);
+    }
+    .score-number {
+      font: 900 34px "STHeiti", "PingFang SC", sans-serif;
+      color: var(--copper);
+      line-height: 1;
+    }
+    .challenge-result {
+      margin-top: 10px;
+      color: #4b3d31;
+      line-height: 1.62;
+      font-size: 14px;
+    }
+    .challenge-observation {
+      margin-top: 10px;
+      border: 1px solid rgba(47, 97, 118, 0.22);
+      border-radius: 14px;
+      padding: 10px;
+      background: rgba(255,255,255,0.58);
+      color: #44382e;
+      line-height: 1.58;
+      font-size: 13px;
+      white-space: pre-wrap;
+    }
+    .answer-gate {
+      display: none;
+      margin-top: 10px;
+      border: 1px solid rgba(47, 97, 118, 0.25);
+      border-radius: 14px;
+      padding: 10px;
+      background: rgba(232, 242, 247, 0.72);
+    }
+    .answer-gate.open {
+      display: block;
+    }
+    .answer-question {
+      margin-bottom: 8px;
+      color: #3d3127;
+      line-height: 1.55;
+      font-size: 14px;
+    }
+
+    .cipher-output {
+      min-height: 70px;
+    }
+
+    .bars {
+      display: grid;
+      gap: 6px;
+    }
+
+    .bar-row {
+      display: grid;
+      grid-template-columns: 26px minmax(0, 1fr) 34px;
+      gap: 8px;
+      align-items: center;
+      color: #473d32;
+      font: 700 12px "STHeiti", "PingFang SC", sans-serif;
+    }
+
+    .bar-track {
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(47, 97, 118, 0.12);
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      display: block;
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--blue), var(--copper));
+      width: var(--w);
+    }
+
+    .matrix {
+      display: grid;
+      grid-template-columns: repeat(var(--cols), minmax(24px, 1fr));
+      gap: 5px;
+      margin-top: 10px;
+    }
+
+    .cell {
+      min-height: 31px;
+      display: grid;
+      place-items: center;
+      border-radius: 9px;
+      background: rgba(47, 97, 118, 0.11);
+      color: #263d46;
+      font: 800 13px "Menlo", "Consolas", monospace;
+    }
+
+    .note-line {
+      margin: 10px 0 0;
+      color: var(--muted);
+      line-height: 1.62;
+      font-size: 14px;
+    }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    header,
+    .case-card {
+      animation: rise 520ms ease both;
+    }
+
+    .case-card:nth-of-type(2) { animation-delay: 70ms; }
+
+    @media (max-width: 1180px) {
+      .media-lab,
+      .modern-lab-grid,
+      .lab-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 820px) {
+      .case-head,
+      .media-lab,
+      .modern-lab-grid,
+      .lab-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .pipeline {
+        grid-template-columns: 1fr 1fr;
+      }
+      .modern-flow {
+        grid-template-columns: 1fr;
+      }
+      .challenge-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .tag { justify-self: start; }
+    }
+  </style>
 </head>
 <body>
-
+  <div class="shell">
     <header>
-        <h1>数字媒体管理与古典破译交互实验工坊</h1>
-        <p>课程大作业 | 开发者：Red-noblue</p>
+      <div class="eyebrow">课程作业扩展案例</div>
+      <h1>古典密码与现代密码交互案例</h1>
+      <p class="lead">页面包含两个可操作实验：数字媒体资产安全流转与可信发布实验、古典密码破译实验。前者区分业务授权、混合加密、签名验真和审计追责；后者观察频率、周期和排列规律如何成为破译入口。</p>
+      <div class="meta-row">
+        <span class="pill">张岩松 · 2023210100</span>
+        <span class="pill">数字媒体管理</span>
+        <span class="pill">古典密码与现代密码</span>
+      </div>
     </header>
 
-    <div class="container">
-        <div class="card media">
-            <div>
-                <h2>📁 案例一：数字媒体管理系统</h2>
-                <p>本案例展示了现代数字资产（图片、音频、视频）的元数据管理、分类检索以及流媒体在线播放控制。通过前端交互模拟高效的资产盘点流转。 </p>
-            </div>
-            <a href="media.html" class="btn">进入系统 →</a>
+    <main>
+      <section class="case-card" id="media-case">
+        <div class="case-head">
+          <div>
+            <h2>数字媒体资产安全实验台</h2>
+            <p>以一段课程视频素材为对象，先配置业务授权规则，再观察混合加密、数字签名验真、追踪水印和审计记录如何分工。实验把 AES、TLS、数字签名、哈希审计与版权管理流程放在同一场景中观察。</p>
+          </div>
+          <span class="tag">数字媒体管理案例</span>
         </div>
 
-        <div class="card crypto">
-            <div>
-                <h2>🔐 案例二：古典密码破译矩阵</h2>
-                <p>本案例聚焦于历史上的经典加密算法（如凯撒密码、维吉尼亚密码）。提供可视化的即时加解密演练，并包含频率分析法破译暗号的交互工具。</p>
+        <div class="media-lab">
+          <div class="lab-panel">
+            <div class="panel-title">
+              <h3>业务场景与授权规则</h3>
+              <button class="info-dot" data-tip="media-key" aria-label="业务授权知识点">!</button>
+              <span class="tip" id="tip-media-key">这一栏只描述管理场景：什么素材、面向什么角色、授权多久。具体的哈希、AES 密钥、密钥封装和数字签名放到下方可信发布实验中完成。</span>
             </div>
-            <a href="crypto.html" class="btn">开始破译 →</a>
-        </div>
-    </div>
+            <div class="control-row">
+              <label for="assetName">素材</label>
+              <input id="assetName" value="课程视频 A-17" aria-label="媒体素材名称">
+            </div>
+            <div class="control-row">
+              <label for="assetLevel">敏感度</label>
+              <select id="assetLevel" aria-label="素材敏感度">
+                <option>普通素材</option>
+                <option selected>版权素材</option>
+                <option>未公开素材</option>
+              </select>
+            </div>
+            <div class="control-row">
+              <label for="userRole">角色</label>
+              <select id="userRole" aria-label="授权角色">
+                <option>课程管理员</option>
+                <option selected>校内学习者</option>
+                <option>外部审阅者</option>
+                <option>未授权访客</option>
+              </select>
+              <label for="licenseDays">期限</label>
+              <input id="licenseDays" type="number" min="1" max="365" value="30" aria-label="授权天数">
+            </div>
+            <div class="control-row">
+              <button class="action" onclick="issueLicense()">签发许可证</button>
+              <button class="action" onclick="embedWatermark()">嵌入追踪水印</button>
+              <button class="action" onclick="generateAuditTrail()">生成审计记录</button>
+              <button class="action secondary" onclick="resetMediaLab()">重置媒体实验</button>
+            </div>
+            <p class="note-line">可调整角色和授权期限，再重新签发许可证；下方可信发布实验会读取同一业务场景，避免重复填写。</p>
+          </div>
 
+          <div class="lab-panel">
+            <div class="panel-title">
+              <h3>安全流程状态</h3>
+              <button class="info-dot" data-tip="media-pipeline" aria-label="流程知识点">!</button>
+              <span class="tip" id="tip-media-pipeline">流程视角比单个算法更重要：密钥、加密、指纹、授权、水印和审计必须前后衔接，才能形成可治理的数字媒体安全链条。</span>
+            </div>
+            <div class="pipeline" id="mediaPipeline"></div>
+            <div class="output-stack">
+              <div class="output-box" id="mediaKey">尚未生成内容密钥</div>
+              <div class="output-box" id="mediaCipher">尚未加密媒体素材</div>
+              <div class="output-box" id="mediaHash">尚未生成内容指纹</div>
+              <div class="output-box light" id="licenseResult">尚未签发许可证</div>
+              <div class="output-box light" id="watermarkResult">尚未嵌入追踪水印</div>
+            </div>
+          </div>
+
+          <div class="lab-panel">
+            <div class="panel-title">
+              <h3>风险观察</h3>
+              <button class="info-dot" data-tip="media-risk" aria-label="风险知识点">!</button>
+              <span class="tip" id="tip-media-risk">风险观察用于说明密码技术的边界。加密能保护内容，但权限撤销、日志可信、泄露追责和版权治理还需要水印、签名、哈希和管理制度共同配合。</span>
+            </div>
+            <div class="threat-grid" id="threatButtons"></div>
+            <div class="risk-card" id="riskFinding"></div>
+            <div class="risk-card response" id="threatResponse"></div>
+            <div class="audit-list" id="auditTrail"></div>
+            <p class="note-line">判断：数字媒体管理中的安全并不只靠“把文件加密”，还取决于授权是否清晰、证据是否可验证、泄露后是否可追责。</p>
+          </div>
+
+          <div class="lab-panel modern-panel">
+            <div class="panel-title">
+              <h3>可信发布与验真实验</h3>
+              <button class="info-dot" data-tip="modern-crypto" aria-label="可信发布与验真实验知识点">!</button>
+              <span class="tip" id="tip-modern-crypto">可信发布实验读取上方业务场景，再演示混合加密和数字签名验真：内容用 AES 保护，内容密钥用公钥封装，哈希和签名用于判断内容与发布声明是否可信。</span>
+            </div>
+            <div class="modern-lab-grid">
+              <div>
+                <div class="risk-card response" id="modernContext">读取业务场景：课程视频 A-17｜校内学习者｜30 天｜版权素材</div>
+                <div class="control-row">
+                  <button class="action" onclick="generateModernHash()">生成内容哈希</button>
+                  <button class="action" onclick="generateModernKey()">生成 AES 内容密钥</button>
+                  <button class="action" onclick="wrapModernKey()">公钥封装密钥</button>
+                </div>
+                <div class="control-row">
+                  <button class="action" onclick="signModernRelease()">签名发布声明</button>
+                  <button class="action" onclick="verifyModernRelease()">验签与验真</button>
+                  <button class="action secondary" onclick="tamperModernRelease()">篡改后再验真</button>
+                  <button class="action secondary" onclick="resetModernLab()">重置现代实验</button>
+                </div>
+                <p class="note-line">观察：混合加密解决“如何安全交付密钥”，数字签名验真解决“内容和声明是否可信”。</p>
+              </div>
+              <div>
+                <div class="pipeline modern-flow" id="modernFlow"></div>
+                <div class="output-stack" style="margin-top: 10px;">
+                  <div class="output-box" id="modernHash">尚未生成内容哈希</div>
+                  <div class="output-box" id="modernKey">尚未生成 AES 内容密钥</div>
+                </div>
+              </div>
+              <div class="output-stack">
+                <div class="output-box light" id="modernEnvelope">尚未进行公钥封装</div>
+                <div class="output-box light" id="modernSignature">尚未签名发布声明</div>
+                <div class="output-box light" id="modernVerify">尚未验签与验真</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="case-card" id="classic-case">
+        <div class="case-head">
+          <div>
+            <h2>古典密码破译实验台</h2>
+            <p>分别观察凯撒密码、维吉尼亚密码和 Scytale 换位密码的结构弱点。实验不追求复杂破解程序，而是把“为什么会被破译”变成可操作的观察。</p>
+            <div class="control-row" style="margin-top: 10px;">
+              <button class="action secondary" onclick="resetClassicLab()">重置破译实验</button>
+            </div>
+          </div>
+          <span class="tag">古典破译案例</span>
+        </div>
+
+        <div class="challenge-panel">
+          <div class="panel-title">
+            <h3>破译任务挑战</h3>
+            <button class="info-dot" data-tip="challenge" aria-label="挑战任务知识点">!</button>
+            <span class="tip" id="tip-challenge">任务制实验要求先观察密文，再尝试提交答案。答错时根据提示调整思路，答对后再切换任务，可以更主动地理解编码、解码和破译之间的关系。</span>
+          </div>
+          <div class="challenge-layout">
+            <div class="challenge-buttons" id="challengeButtons"></div>
+            <div class="challenge-card">
+              <div class="challenge-title-line">
+                <h4 id="challengeTitle">凯撒移位任务</h4>
+                <button class="info-dot" id="activeChallengeTipDot" data-tip="active-challenge" aria-label="本题提示与知识点">!</button>
+                <span class="tip" id="tip-active-challenge">本题提示会随挑战内容更新。</span>
+              </div>
+              <p class="note-line" id="challengePrompt"></p>
+              <div class="challenge-cipher" id="challengeCipher"></div>
+              <div class="control-row">
+                <label for="challengeAnswer">你的答案</label>
+                <input id="challengeAnswer" aria-label="挑战答案" placeholder="输入明文或参数">
+                <button class="action" onclick="submitChallenge()">提交挑战答案</button>
+                <button class="action secondary" onclick="showAnswerGate()">显示答案</button>
+              </div>
+              <div class="control-row">
+                <button class="action secondary" onclick="loadChallengeToLab()">载入实验台</button>
+                <button class="action secondary" onclick="generateChallengeObservation()">生成观察结果</button>
+              </div>
+              <div class="challenge-observation" id="challengeObservation">可先载入对应实验台，再生成观察线索。</div>
+              <div class="answer-gate" id="answerGate">
+                <div class="answer-question" id="answerQuestion"></div>
+                <div class="control-row">
+                  <label for="answerCheckInput">验证答案</label>
+                  <input id="answerCheckInput" aria-label="答案验证输入" inputmode="numeric" placeholder="输入计算结果">
+                  <button class="action" onclick="verifyAndRevealAnswer()">验证并显示答案</button>
+                </div>
+                <div class="challenge-result" id="answerReveal">答对验证题后显示当前任务参考答案。</div>
+              </div>
+            </div>
+            <div class="score-ring">
+              <div>当前得分</div>
+              <div class="score-number" id="challengeScore">0</div>
+              <div class="challenge-result" id="challengeResult">选择任务后提交答案，系统会给出反馈。</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="lab-grid">
+          <div class="tool-panel">
+            <div class="panel-title">
+              <h3>凯撒移位：穷举和频率分析</h3>
+              <button class="info-dot" data-tip="caesar" aria-label="凯撒密码知识点">!</button>
+              <span class="tip" id="tip-caesar">凯撒密码属于单表替换。它的弱点是密钥空间极小，而且同一明文字母总是对应同一密文字母，所以穷举和频率分析都很有效。</span>
+            </div>
+            <div class="control-row">
+              <label for="caesarText">密文</label>
+              <input id="caesarText" value="KHOOR GLJLWDO PHGLD" aria-label="凯撒密码密文">
+              <label for="shiftValue">移位</label>
+              <select id="shiftValue" aria-label="凯撒移位">
+                <option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option>
+                <option>6</option><option>7</option><option>8</option><option>9</option><option>10</option>
+              </select>
+              <button class="action" onclick="runCaesar()">解密</button>
+            </div>
+            <div class="cipher-output" id="caesarOutput">等待点击“解密”</div>
+            <button class="action" style="margin-top: 10px;" onclick="runFrequency()">生成频率柱状图</button>
+            <div class="bars" id="frequencyBars" style="margin-top: 10px;"></div>
+            <p class="note-line">同一字母长期映射为同一密文字母，频率结构会保留下来。</p>
+          </div>
+
+          <div class="tool-panel">
+            <div class="panel-title">
+              <h3>维吉尼亚：周期拆分</h3>
+              <button class="info-dot" data-tip="vigenere" aria-label="维吉尼亚密码知识点">!</button>
+              <span class="tip" id="tip-vigenere">维吉尼亚密码使用多个替换表，能削弱简单频率分析。但关键词周期如果被估计出来，密文可以拆成若干组，每组再近似回到单表替换问题。</span>
+            </div>
+            <div class="control-row">
+              <label for="vigText">密文</label>
+              <input id="vigText" value="LXFOPVEFRNHR" aria-label="维吉尼亚密文">
+              <label for="keyLength">假设周期</label>
+              <select id="keyLength" aria-label="维吉尼亚周期">
+                <option>2</option><option selected>3</option><option>4</option><option>5</option>
+              </select>
+              <button class="action" onclick="runVigenere()">拆分</button>
+            </div>
+            <div class="cipher-output" id="vigenereOutput">等待点击“拆分”</div>
+            <p class="note-line">关键词周期一旦被估计出来，多表替换会被拆成若干近似单表问题。</p>
+          </div>
+
+          <div class="tool-panel">
+            <div class="panel-title">
+              <h3>Scytale：换位重排</h3>
+              <button class="info-dot" data-tip="scytale" aria-label="换位密码知识点">!</button>
+              <span class="tip" id="tip-scytale">Scytale 展示的是换位思想：字符本身不变，位置关系发生变化。它能打乱阅读顺序，但总体字符频率不变，行列宽度也会成为破译线索。</span>
+            </div>
+            <div class="control-row">
+              <label for="scytaleText">密文</label>
+              <input id="scytaleText" value="WECRLTEERDSOEEFEAOCAIVDEN" aria-label="Scytale 密文">
+              <label for="scytaleCols">列数</label>
+              <select id="scytaleCols" aria-label="Scytale 列数">
+                <option>4</option><option selected>5</option><option>6</option><option>7</option>
+              </select>
+              <button class="action" onclick="runScytale()">重排</button>
+            </div>
+            <div class="matrix" id="scytaleMatrix" style="--cols:5"></div>
+            <div class="cipher-output" id="scytaleReadout" style="margin-top: 10px;">等待点击“重排”</div>
+            <p class="note-line">换位密码改变位置关系，但字符频率仍保持，行列宽度会成为搜索线索。</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const pipeline = [
+      ["密钥", "生成内容密钥"],
+      ["加密", "保护媒体内容"],
+      ["指纹", "固定内容版本"],
+      ["授权", "限定访问范围"],
+      ["水印", "留下追踪线索"],
+      ["审计", "形成责任链"],
+    ];
+
+    const modernPipeline = [
+      ["哈希", "固定内容版本"],
+      ["密钥", "生成 AES 内容密钥"],
+      ["封装", "用公钥保护密钥"],
+      ["签名", "绑定发布声明"],
+      ["验真", "验证内容和声明"],
+    ];
+
+    const threats = [
+      {
+        title: "未授权下载",
+        text: "如果只有文件链接，没有许可证和身份校验，外部用户可能绕过平台直接复制内容。应使用访问控制、短期许可证和会话密钥。",
+        focus: "授权",
+        response: "系统响应：检查许可证、角色和会话密钥。若许可证不存在或过期，应拒绝解密内容密钥。",
+      },
+      {
+        title: "文件篡改",
+        text: "若素材被替换或剪辑，哈希指纹和数字签名可以帮助发现版本变化，并把责任定位到具体操作记录。",
+        focus: "指纹",
+        response: "系统响应：重新计算哈希指纹并与登记值比对；若哈希指纹不一致，应标记版本异常并进入审计流程。",
+      },
+      {
+        title: "许可证过期",
+        text: "版权素材需要时间、角色和设备边界。许可证过期后应撤销解密能力，而不是只依赖人工管理。",
+        focus: "授权",
+        response: "系统响应：重新校验许可证期限和角色范围。过期许可证不能继续换取内容密钥。",
+      },
+      {
+        title: "泄露追责",
+        text: "内容外泄后，水印、签名日志和哈希审计可以共同提供证据，但它们需要在分发前就进入流程。",
+        focus: "水印",
+        response: "系统响应：提取追踪水印，关联签名日志和哈希审计记录，形成泄露来源判断。",
+      },
+    ];
+
+    const mediaState = {
+      key: "",
+      cipher: "",
+      hash: "",
+      license: "",
+      watermark: "",
+      done: new Set(),
+      active: "密钥",
+    };
+
+    const modernState = {
+      hash: "",
+      key: "",
+      envelope: "",
+      signature: "",
+      originalDeclaration: "",
+      currentDeclaration: "",
+      done: new Set(),
+      active: "哈希",
+      tampered: false,
+    };
+
+    const challengeCatalog = [
+      {
+        key: "caesar",
+        button: "凯撒移位任务",
+        title: "凯撒移位任务",
+        variants: [
+          {
+            id: "crypto-graphic-shift-3",
+            lab: "caesar",
+            shift: 3,
+            prompt: "密文由明文右移 3 位得到。可先载入凯撒实验台，生成候选解密结果后提交英文明文。",
+            cipher: "FUBSWR JUDSKLF",
+            answers: ["CRYPTO GRAPHIC", "CRYPTOGRAPHIC"],
+            reveal: "CRYPTO GRAPHIC",
+            hint: "把每个字母向左移动 3 位，空格保持不变。",
+            success: "完成：你正确恢复了明文。凯撒密码的密钥空间很小，穷举通常很快见效。",
+            knowledge: "本题知识点：凯撒密码属于单表替换。移位值固定时，所有字母都按同一规则平移，所以可以通过穷举 25 种移位或观察高频字母来破译。",
+          },
+          {
+            id: "media-security-shift-4",
+            lab: "caesar",
+            shift: 4,
+            prompt: "密文由明文右移 4 位得到。可先载入凯撒实验台，生成候选解密结果后提交英文明文。",
+            cipher: "QIHME WIGYVMXC",
+            answers: ["MEDIA SECURITY", "MEDIASECURITY"],
+            reveal: "MEDIA SECURITY",
+            hint: "把每个字母向左移动 4 位，注意保留两个单词。",
+            success: "完成：你识别了正确移位。小密钥空间是凯撒密码的核心弱点。",
+            knowledge: "本题知识点：同一明文字母总被替换为同一密文字母，因此密文长度足够时会保留语言频率特征；短文本也可以直接穷举所有移位。",
+          },
+          {
+            id: "digital-asset-shift-4",
+            lab: "caesar",
+            shift: 4,
+            prompt: "密文由明文右移 4 位得到。可先载入凯撒实验台，生成候选解密结果后提交英文明文。",
+            cipher: "HMKMXEP EWWIX",
+            answers: ["DIGITAL ASSET", "DIGITALASSET"],
+            reveal: "DIGITAL ASSET",
+            hint: "从 H 向左回推 4 位会得到 D。",
+            success: "完成：你恢复了数字媒体场景中的明文短语。",
+            knowledge: "本题知识点：凯撒密码的加密和解密只差方向。已知移位值时解密很直接；未知移位值时可以用穷举快速筛选自然语言候选。",
+          },
+        ],
+      },
+      {
+        key: "vigenere",
+        button: "维吉尼亚周期任务",
+        title: "维吉尼亚周期任务",
+        variants: [
+          {
+            id: "attack-dawn-lemon",
+            lab: "vigenere",
+            period: 5,
+            prompt: "先载入维吉尼亚实验台，生成候选周期 2/3/4/5 的拆分结果，再提交被标出的周期长度。",
+            cipher: "LXFOPVEFRNHR",
+            answers: ["5"],
+            reveal: "5",
+            hint: "点击“生成观察结果”，查看候选周期拆分中被标出的周期。",
+            success: "完成：周期为 5。周期被估计出来后，多表替换可以拆成若干组分析。",
+            knowledge: "本题知识点：维吉尼亚密码用重复关键词形成多表替换。破译时常先估计关键词周期，再把同一周期位置的字符分组做频率分析。",
+          },
+          {
+            id: "media-asset-key",
+            lab: "vigenere",
+            period: 3,
+            prompt: "先载入维吉尼亚实验台，生成候选周期 2/3/4/5 的拆分结果，再提交被标出的周期长度。",
+            cipher: "WIBSEYCWCDJJYA",
+            answers: ["3"],
+            reveal: "3",
+            hint: "点击“生成观察结果”，查看候选周期拆分中被标出的周期。",
+            success: "完成：周期为 3。短周期会让多表替换重新暴露出可分析的分组规律。",
+            knowledge: "本题知识点：关键词越短，周期重复越明显。周期长度一旦被猜中，就可以分别分析第 1、2、3 组字符的替换关系。",
+          },
+          {
+            id: "secure-media-lock",
+            lab: "vigenere",
+            period: 4,
+            prompt: "先载入维吉尼亚实验台，生成候选周期 2/3/4/5 的拆分结果，再提交被标出的周期长度。",
+            cipher: "DSEECSOOOWCVLP",
+            answers: ["4"],
+            reveal: "4",
+            hint: "点击“生成观察结果”，查看候选周期拆分中被标出的周期。",
+            success: "完成：周期为 4。维吉尼亚密码的安全性很依赖关键词长度和随机性。",
+            knowledge: "本题知识点：维吉尼亚比凯撒更强，因为它让同一明文字母在不同位置可能对应不同密文字母；但重复关键词仍会留下周期线索。",
+          },
+        ],
+      },
+      {
+        key: "scytale",
+        button: "换位列数任务",
+        title: "Scytale 换位任务",
+        variants: [
+          {
+            id: "flee-at-once-cols-5",
+            lab: "scytale",
+            cols: 4,
+            prompt: "先载入 Scytale 实验台，生成候选列数 4/5/6/7 的还原预览，再提交最自然的列数。",
+            cipher: "MADAETILEMALTEH",
+            answers: ["4"],
+            reveal: "4",
+            hint: "点击“生成观察结果”，比较哪个列数能还原出连续英文短语。",
+            success: "完成：列数 4 能还原出 MEETATMEDIAHALL。换位密码的关键常在排列宽度。",
+            knowledge: "本题知识点：换位密码不改变字母本身，只改变排列位置。因此字母频率可能仍接近原文，破译重点转向行列宽度和阅读顺序。",
+          },
+          {
+            id: "digital-media-cols-4",
+            lab: "scytale",
+            cols: 4,
+            prompt: "先载入 Scytale 实验台，生成候选列数 4/5/6/7 的还原预览，再提交最自然的列数。",
+            cipher: "DTEFIADLGLIOIMAW",
+            answers: ["4"],
+            reveal: "4",
+            hint: "点击“生成观察结果”，比较哪个列数能还原出连续英文短语。",
+            success: "完成：列数 4 可以还原出更自然的词序。换位密码的安全性来自排列复杂度。",
+            knowledge: "本题知识点：Scytale 的本质是固定宽度的行列换位。列数就是结构密钥，列数越容易猜，破译越容易。",
+          },
+          {
+            id: "secure-asset-cols-5",
+            lab: "scytale",
+            cols: 5,
+            prompt: "先载入 Scytale 实验台，生成候选列数 4/5/6/7 的还原预览，再提交最自然的列数。",
+            cipher: "SETEALCSOUSGRES",
+            answers: ["5"],
+            reveal: "5",
+            hint: "点击“生成观察结果”，比较哪个列数能还原出连续英文短语。",
+            success: "完成：列数 5 能解释这段排列。换位没有隐藏字母频率，只隐藏顺序。",
+            knowledge: "本题知识点：替换密码隐藏字符身份，换位密码隐藏字符位置。两者可组合使用，但单独的简单换位并不适合现代安全场景。",
+          },
+        ],
+      },
+    ];
+
+    function pickChallengeVariant(group) {
+      const storageKey = `challengeVariant:${group.key}`;
+      const previous = sessionStorage.getItem(storageKey) || "";
+      let choices = group.variants.filter((item) => item.id !== previous);
+      if (!choices.length) choices = group.variants;
+      const selected = choices[Math.floor(Math.random() * choices.length)];
+      sessionStorage.setItem(storageKey, selected.id);
+      return { key: group.key, button: group.button, title: group.title, ...selected };
+    }
+
+    function buildRandomChallenges() {
+      return challengeCatalog.map((group) => pickChallengeVariant(group));
+    }
+
+    const challenges = buildRandomChallenges();
+
+    let activeChallenge = 0;
+    let answerGate = { text: "", answer: 0 };
+
+    function getActiveChallenge() {
+      return challenges[activeChallenge];
+    }
+
+    function createAnswerGateQuestion() {
+      const last = sessionStorage.getItem("answerGateQuestion") || "";
+      let a = Math.floor(Math.random() * 8) + 1;
+      let b = Math.floor(Math.random() * 8) + 1;
+      let text = `${a} + ${b} = ?`;
+      if (text === last) {
+        b = (b % 8) + 1;
+        text = `${a} + ${b} = ?`;
+      }
+      sessionStorage.setItem("answerGateQuestion", text);
+      answerGate = { text, answer: a + b };
+    }
+
+    function textHash(text) {
+      let hash = 2166136261;
+      for (const char of text) {
+        hash ^= char.charCodeAt(0);
+        hash = Math.imul(hash, 16777619);
+      }
+      return (hash >>> 0).toString(16).toUpperCase().padStart(8, "0");
+    }
+
+    function getAssetContext() {
+      const name = document.getElementById("assetName").value.trim() || "未命名素材";
+      const level = document.getElementById("assetLevel").value;
+      const role = document.getElementById("userRole").value;
+      const days = document.getElementById("licenseDays").value || "1";
+      return { name, level, role, days };
+    }
+
+    function renderPipeline() {
+      const wrap = document.getElementById("mediaPipeline");
+      wrap.innerHTML = pipeline.map(([title, desc]) => {
+        const classes = [
+          "pipe-node",
+          mediaState.done.has(title) ? "done" : "",
+          mediaState.active === title ? "active" : "",
+        ].filter(Boolean).join(" ");
+        return `<div class="${classes}"><b>${title}</b><small>${desc}</small></div>`;
+      }).join("");
+    }
+
+    function renderModernFlow() {
+      const wrap = document.getElementById("modernFlow");
+      wrap.innerHTML = modernPipeline.map(([title, desc]) => {
+        const classes = [
+          "pipe-node",
+          modernState.done.has(title) ? "done" : "",
+          modernState.active === title ? "active" : "",
+        ].filter(Boolean).join(" ");
+        return `<div class="${classes}"><b>${title}</b><small>${desc}</small></div>`;
+      }).join("");
+    }
+
+    function markStep(title) {
+      mediaState.done.add(title);
+      mediaState.active = title;
+      renderPipeline();
+    }
+
+    function markModernStep(title) {
+      modernState.done.add(title);
+      modernState.active = title;
+      renderModernFlow();
+    }
+
+    function getModernContext() {
+      const { name, level, role, days } = getAssetContext();
+      const scope = `${level}｜${days} 天授权`;
+      return { asset: name, receiver: role, scope, level, days };
+    }
+
+    function renderModernContext() {
+      const { asset, receiver, level, days } = getModernContext();
+      document.getElementById("modernContext").textContent = `读取业务场景：${asset}｜${receiver}｜${days} 天｜${level}`;
+    }
+
+    function buildModernDeclaration(hashValue = modernState.hash) {
+      const { asset, receiver, scope } = getModernContext();
+      return `内容=${asset};接收对象=${receiver};范围=${scope};哈希=${hashValue}`;
+    }
+
+    function generateModernHash() {
+      const { asset, receiver, scope } = getModernContext();
+      renderModernContext();
+      modernState.hash = `SHA-256:${textHash(`${asset}|${scope}`)}${textHash(`${receiver}|${asset}`).slice(0, 8)}`;
+      modernState.originalDeclaration = buildModernDeclaration(modernState.hash);
+      modernState.currentDeclaration = modernState.originalDeclaration;
+      modernState.tampered = false;
+      document.getElementById("modernHash").textContent = `内容哈希：${modernState.hash}\n对象：${asset}\n作用：固定媒体内容版本，任何内容变化都会得到不同指纹`;
+      document.getElementById("modernVerify").textContent = "哈希已生成，可继续封装密钥并签名发布声明。";
+      markModernStep("哈希");
+    }
+
+    function generateModernKey() {
+      if (!modernState.hash) generateModernHash();
+      const { asset, receiver } = getModernContext();
+      modernState.key = `AES-256:${textHash(`${asset}|${receiver}|content-key`).slice(0, 16)}`;
+      document.getElementById("modernKey").textContent = `内容密钥：${modernState.key}\n作用：AES 适合加密大体量视频、图片和文档`;
+      markModernStep("密钥");
+    }
+
+    function wrapModernKey() {
+      if (!modernState.key) generateModernKey();
+      const { receiver } = getModernContext();
+      const pub = `PUB-${textHash(receiver).slice(0, 8)}`;
+      modernState.envelope = `WRAP{${textHash(`${modernState.key}|${pub}`).slice(0, 14)}}`;
+      document.getElementById("modernEnvelope").textContent = `公钥封装：${pub} -> ${modernState.envelope}\n含义：接收方用私钥打开密钥封装，再用 AES 密钥解密媒体内容`;
+      markModernStep("封装");
+    }
+
+    function signModernRelease() {
+      if (!modernState.envelope) wrapModernKey();
+      modernState.originalDeclaration = buildModernDeclaration(modernState.hash);
+      modernState.currentDeclaration = modernState.originalDeclaration;
+      modernState.signature = `SIGN-${textHash(`${modernState.originalDeclaration}|${modernState.envelope}`).slice(0, 12)}`;
+      modernState.tampered = false;
+      document.getElementById("modernSignature").textContent = `数字签名验真：${modernState.signature}\n签名对象：内容哈希、接收对象、发布范围和密钥封装`;
+      document.getElementById("modernVerify").textContent = "发布声明已签名，等待验签与验真。";
+      markModernStep("签名");
+    }
+
+    function verifyModernRelease() {
+      if (!modernState.signature) signModernRelease();
+      const currentSignature = `SIGN-${textHash(`${modernState.currentDeclaration}|${modernState.envelope}`).slice(0, 12)}`;
+      const ok = !modernState.tampered && currentSignature === modernState.signature;
+      document.getElementById("modernVerify").textContent = ok
+        ? "验真通过：内容哈希、发布声明和数字签名一致，可判断内容未被篡改且声明可信。"
+        : "验真失败：当前内容或声明已变化，哈希不一致，原数字签名不能证明这份内容可信。";
+      markModernStep("验真");
+    }
+
+    function tamperModernRelease() {
+      if (!modernState.signature) signModernRelease();
+      const { asset, receiver, scope } = getModernContext();
+      const tamperedHash = `SHA-256:${textHash(`${asset}|${scope}|内容被剪辑`)}${textHash(`${receiver}|tampered`).slice(0, 8)}`;
+      modernState.currentDeclaration = `内容=${asset}（已剪辑）;接收对象=${receiver};范围=${scope};哈希=${tamperedHash}`;
+      modernState.tampered = true;
+      document.getElementById("modernHash").textContent = `篡改后内容哈希：${tamperedHash}\n对比：原发布声明中的哈希为 ${modernState.hash}`;
+      verifyModernRelease();
+    }
+
+    function resetModernLab() {
+      modernState.hash = "";
+      modernState.key = "";
+      modernState.envelope = "";
+      modernState.signature = "";
+      modernState.originalDeclaration = "";
+      modernState.currentDeclaration = "";
+      modernState.done = new Set();
+      modernState.active = "哈希";
+      modernState.tampered = false;
+      renderModernContext();
+      document.getElementById("modernHash").textContent = "尚未生成内容哈希";
+      document.getElementById("modernKey").textContent = "尚未生成 AES 内容密钥";
+      document.getElementById("modernEnvelope").textContent = "尚未进行公钥封装";
+      document.getElementById("modernSignature").textContent = "尚未签名发布声明";
+      document.getElementById("modernVerify").textContent = "尚未验签与验真";
+      renderModernFlow();
+    }
+
+    function generateMediaKey() {
+      const { name, level } = getAssetContext();
+      mediaState.key = `KM-${textHash(`${name}|${level}`).slice(0, 8)}`;
+      document.getElementById("mediaKey").textContent = `内容密钥：${mediaState.key}\n用途：保护 ${name} 的加密访问`;
+      markStep("密钥");
+    }
+
+    function encryptMediaAsset() {
+      if (!mediaState.key) generateMediaKey();
+      const { name, level } = getAssetContext();
+      const fingerprint = textHash(`${name}|${level}|${mediaState.key}`);
+      mediaState.cipher = `ENC{${fingerprint.slice(0, 4)}-${fingerprint.slice(4)}}`;
+      mediaState.hash = `SHA-256:${textHash(mediaState.cipher + name)}${textHash(level + mediaState.key)}`;
+      document.getElementById("mediaCipher").textContent = `密文标识：${mediaState.cipher}\n算法角色：对称加密适合处理大体量媒体文件`;
+      document.getElementById("mediaHash").textContent = `内容指纹：${mediaState.hash}\n用途：发现篡改，固定版本`;
+      markStep("加密");
+      mediaState.done.add("指纹");
+      renderPipeline();
+    }
+
+    function issueLicense() {
+      if (!mediaState.key) generateMediaKey();
+      const { role, days, level } = getAssetContext();
+      const scope = role === "未授权访客" ? "拒绝访问" : `允许访问 ${days} 天`;
+      mediaState.license = `LIC-${textHash(`${role}|${days}|${level}`).slice(0, 10)}`;
+      document.getElementById("licenseResult").textContent = `许可证：${mediaState.license}\n对象：${role}\n范围：${scope}`;
+      markStep("授权");
+    }
+
+    function embedWatermark() {
+      const { name, role } = getAssetContext();
+      mediaState.watermark = `WM-${textHash(`${name}|${role}|trace`).slice(0, 10)}`;
+      document.getElementById("watermarkResult").textContent = `水印编号：${mediaState.watermark}\n用途：泄露后辅助定位分发对象`;
+      markStep("水印");
+    }
+
+    function generateAuditTrail() {
+      if (!mediaState.hash) encryptMediaAsset();
+      if (!mediaState.license) issueLicense();
+      if (!mediaState.watermark) embedWatermark();
+      const { name, role } = getAssetContext();
+      const records = [
+        `上传：${name} 生成初始元数据`,
+        `加密：${mediaState.cipher} 与 ${mediaState.hash.slice(0, 18)}... 绑定`,
+        `授权：${role} 获得 ${mediaState.license}`,
+        `追责：水印 ${mediaState.watermark} 写入分发副本`,
+      ];
+      document.getElementById("auditTrail").innerHTML = records.map((item) => `<div class="audit-item">${item}</div>`).join("");
+      markStep("审计");
+    }
+
+    function resetMediaLab() {
+      mediaState.key = "";
+      mediaState.cipher = "";
+      mediaState.hash = "";
+      mediaState.license = "";
+      mediaState.watermark = "";
+      mediaState.done = new Set();
+      mediaState.active = "密钥";
+      document.getElementById("assetName").value = "课程视频 A-17";
+      document.getElementById("assetLevel").value = "版权素材";
+      document.getElementById("userRole").value = "校内学习者";
+      document.getElementById("licenseDays").value = "30";
+      document.getElementById("mediaKey").textContent = "尚未生成内容密钥";
+      document.getElementById("mediaCipher").textContent = "尚未加密媒体素材";
+      document.getElementById("mediaHash").textContent = "尚未生成内容指纹";
+      document.getElementById("licenseResult").textContent = "尚未签发许可证";
+      document.getElementById("watermarkResult").textContent = "尚未嵌入追踪水印";
+      document.getElementById("auditTrail").innerHTML = "";
+      renderPipeline();
+      setThreat(0);
+      resetModernLab();
+    }
+
+    function bindBusinessContextUpdates() {
+      ["assetName", "assetLevel", "userRole", "licenseDays"].forEach((id) => {
+        const node = document.getElementById(id);
+        node.addEventListener("input", resetModernLab);
+        node.addEventListener("change", resetModernLab);
+      });
+    }
+
+    function renderThreats() {
+      const wrap = document.getElementById("threatButtons");
+      wrap.innerHTML = threats.map((item, index) => `<button class="threat-button" onclick="setThreat(${index})">${item.title}</button>`).join("");
+      setThreat(0);
+    }
+
+    function setThreat(index) {
+      document.querySelectorAll(".threat-button").forEach((button, i) => button.classList.toggle("active", i === index));
+      const threat = threats[index];
+      document.getElementById("riskFinding").textContent = threat.text;
+      document.getElementById("threatResponse").textContent = threat.response;
+      mediaState.active = threat.focus;
+      renderPipeline();
+    }
+
+    function shiftLetter(char, shift) {
+      const code = char.charCodeAt(0);
+      if (code >= 65 && code <= 90) return String.fromCharCode(((code - 65 - shift + 26) % 26) + 65);
+      if (code >= 97 && code <= 122) return String.fromCharCode(((code - 97 - shift + 26) % 26) + 97);
+      return char;
+    }
+
+    function runCaesar() {
+      const text = document.getElementById("caesarText").value;
+      const shift = Number(document.getElementById("shiftValue").value);
+      const plain = text.split("").map((char) => shiftLetter(char, shift)).join("");
+      const guesses = [1, 2, 3, 4, 5].map((s) => `${s}: ${text.split("").map((char) => shiftLetter(char, s)).join("")}`).join("\n");
+      document.getElementById("caesarOutput").textContent = `shift ${shift} -> ${plain}\n\n前 5 个穷举候选：\n${guesses}`;
+    }
+
+    function runFrequency() {
+      const text = document.getElementById("caesarText").value.toUpperCase();
+      const counts = {};
+      for (const char of text) {
+        if (char >= "A" && char <= "Z") counts[char] = (counts[char] || 0) + 1;
+      }
+      const rows = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 7);
+      const max = rows.length ? rows[0][1] : 1;
+      document.getElementById("frequencyBars").innerHTML = rows.map(([letter, count]) => `
+        <div class="bar-row">
+          <span>${letter}</span>
+          <span class="bar-track"><span class="bar-fill" style="width:${Math.max(8, count / max * 100)}%"></span></span>
+          <span>${count}</span>
+        </div>
+      `).join("");
+    }
+
+    function runVigenere() {
+      const text = document.getElementById("vigText").value.replace(/[^A-Za-z]/g, "").toUpperCase();
+      const keyLength = Number(document.getElementById("keyLength").value);
+      const result = splitVigenereGroups(text, keyLength);
+      document.getElementById("vigenereOutput").textContent = `${result}\n\n观察：每组可近似看作同一张替换表产生的密文。`;
+    }
+
+    function runScytale() {
+      const text = document.getElementById("scytaleText").value.replace(/\s+/g, "").toUpperCase();
+      const cols = Number(document.getElementById("scytaleCols").value);
+      const matrix = document.getElementById("scytaleMatrix");
+      matrix.style.setProperty("--cols", cols);
+      matrix.innerHTML = [...text].map((char) => `<span class="cell">${char}</span>`).join("");
+      const rows = [];
+      for (let i = 0; i < text.length; i += cols) rows.push(text.slice(i, i + cols));
+      const decoded = decodeScytaleCandidate(text, cols);
+      document.getElementById("scytaleReadout").textContent = `按 ${cols} 列分组：\n${rows.join("\n")}\n\n按 ${cols} 列尝试还原：${decoded}`;
+    }
+
+    function splitVigenereGroups(text, keyLength) {
+      const groups = Array.from({ length: keyLength }, () => []);
+      [...text].forEach((char, index) => groups[index % keyLength].push(char));
+      return groups.map((group, index) => `第 ${index + 1} 组: ${group.join("")}`).join("\n");
+    }
+
+    function renderVigenereCandidates(challenge = getActiveChallenge()) {
+      const text = challenge.cipher.replace(/[^A-Za-z]/g, "").toUpperCase();
+      const periods = [2, 3, 4, 5];
+      return `生成候选周期：\n${periods.map((period) => {
+        const marker = period === challenge.period ? "  ← 本题可观察周期" : "";
+        return `周期 ${period}${marker}\n${splitVigenereGroups(text, period)}`;
+      }).join("\n\n")}`;
+    }
+
+    function decodeScytaleCandidate(cipher, cols) {
+      const text = cipher.replace(/[^A-Za-z]/g, "").toUpperCase();
+      const rows = Math.ceil(text.length / cols);
+      const remainder = text.length % cols;
+      const colLengths = Array.from({ length: cols }, (_, index) => {
+        if (remainder === 0) return rows;
+        return index < remainder ? rows : rows - 1;
+      });
+      const columns = [];
+      let cursor = 0;
+      for (const length of colLengths) {
+        columns.push(text.slice(cursor, cursor + length).split(""));
+        cursor += length;
+      }
+      const output = [];
+      for (let row = 0; row < rows; row++) {
+        for (let col = 0; col < cols; col++) {
+          if (columns[col][row]) output.push(columns[col][row]);
+        }
+      }
+      return output.join("");
+    }
+
+    function renderScytaleCandidates(challenge = getActiveChallenge()) {
+      const text = challenge.cipher.replace(/[^A-Za-z]/g, "").toUpperCase();
+      const cols = [4, 5, 6, 7];
+      return `生成候选列数：\n${cols.map((col) => {
+        const decoded = decodeScytaleCandidate(text, col);
+        const marker = col === challenge.cols ? "  ← 最像自然语言" : "";
+        return `列数 ${col}${marker}: ${decoded}`;
+      }).join("\n")}`;
+    }
+
+    function loadChallengeToLab() {
+      const challenge = getActiveChallenge();
+      if (challenge.lab === "caesar") {
+        document.getElementById("caesarText").value = challenge.cipher;
+        document.getElementById("shiftValue").value = String(challenge.shift);
+        document.getElementById("challengeObservation").textContent = `已载入凯撒实验台：密文 ${challenge.cipher}，移位 ${challenge.shift}。点击“生成观察结果”可看到候选明文。`;
+      }
+      if (challenge.lab === "vigenere") {
+        document.getElementById("vigText").value = challenge.cipher;
+        document.getElementById("keyLength").value = String(challenge.period);
+        document.getElementById("vigenereOutput").textContent = "已载入维吉尼亚实验台，等待生成候选周期。";
+        document.getElementById("challengeObservation").textContent = "已载入维吉尼亚实验台：下一步生成候选周期 2/3/4/5 的拆分结果。";
+      }
+      if (challenge.lab === "scytale") {
+        document.getElementById("scytaleText").value = challenge.cipher;
+        document.getElementById("scytaleCols").value = String(challenge.cols);
+        document.getElementById("scytaleMatrix").innerHTML = "";
+        document.getElementById("scytaleReadout").textContent = "已载入 Scytale 实验台，等待生成候选列数。";
+        document.getElementById("challengeObservation").textContent = "已载入 Scytale 实验台：下一步生成候选列数 4/5/6/7 的还原预览。";
+      }
+    }
+
+    function generateChallengeObservation() {
+      const challenge = getActiveChallenge();
+      loadChallengeToLab();
+      if (challenge.lab === "caesar") {
+        runCaesar();
+        runFrequency();
+        document.getElementById("challengeObservation").textContent = `凯撒观察：实验台已按移位 ${challenge.shift} 生成候选解密结果。若某一项形成自然英文短语，就把它作为答案提交。`;
+      }
+      if (challenge.lab === "vigenere") {
+        const result = renderVigenereCandidates(challenge);
+        document.getElementById("vigenereOutput").textContent = result;
+        document.getElementById("challengeObservation").textContent = result;
+      }
+      if (challenge.lab === "scytale") {
+        const result = renderScytaleCandidates(challenge);
+        runScytale();
+        document.getElementById("scytaleReadout").textContent = result;
+        document.getElementById("challengeObservation").textContent = result;
+      }
+    }
+
+    function resetClassicLab() {
+      document.getElementById("caesarText").value = "KHOOR GLJLWDO PHGLD";
+      document.getElementById("shiftValue").value = "3";
+      document.getElementById("caesarOutput").textContent = "等待点击“解密”";
+      document.getElementById("frequencyBars").innerHTML = "";
+      document.getElementById("vigText").value = "LXFOPVEFRNHR";
+      document.getElementById("keyLength").value = "3";
+      document.getElementById("vigenereOutput").textContent = "等待点击“拆分”";
+      document.getElementById("scytaleText").value = "WECRLTEERDSOEEFEAOCAIVDEN";
+      document.getElementById("scytaleCols").value = "5";
+      document.getElementById("scytaleMatrix").innerHTML = "";
+      document.getElementById("scytaleMatrix").style.setProperty("--cols", 5);
+      document.getElementById("scytaleReadout").textContent = "等待点击“重排”";
+      setChallenge(0);
+    }
+
+    function normalizeAnswer(value) {
+      return value.trim().toUpperCase().replace(/\s+/g, " ");
+    }
+
+    function renderChallengeButtons() {
+      document.getElementById("challengeButtons").innerHTML = challenges.map((challenge, index) => {
+        const active = index === activeChallenge ? " active" : "";
+        return `<button class="challenge-button${active}" onclick="setChallenge(${index})">${challenge.button}</button>`;
+      }).join("");
+    }
+
+    function setChallenge(index) {
+      activeChallenge = index;
+      const challenge = getActiveChallenge();
+      renderChallengeButtons();
+      document.getElementById("challengeTitle").textContent = challenge.title;
+      document.getElementById("challengePrompt").textContent = challenge.prompt;
+      document.getElementById("challengeCipher").textContent = challenge.cipher;
+      document.getElementById("tip-active-challenge").textContent = challenge.knowledge;
+      document.getElementById("challengeAnswer").value = "";
+      document.getElementById("challengeScore").textContent = "0";
+      document.getElementById("challengeResult").textContent = "提交答案后，系统会判断是否完成任务。";
+      document.getElementById("challengeObservation").textContent = "可先载入对应实验台，再生成观察线索。";
+      closeAnswerGate();
+    }
+
+    function submitChallenge() {
+      const challenge = getActiveChallenge();
+      const answer = normalizeAnswer(document.getElementById("challengeAnswer").value);
+      const ok = challenge.answers.some((item) => normalizeAnswer(item) === answer);
+      document.getElementById("challengeScore").textContent = ok ? "100" : "45";
+      document.getElementById("challengeResult").textContent = ok ? challenge.success : `继续尝试：${challenge.hint}`;
+    }
+
+    function closeAnswerGate() {
+      document.getElementById("answerGate").classList.remove("open");
+      document.getElementById("answerCheckInput").value = "";
+      document.getElementById("answerReveal").textContent = "答对验证题后显示当前任务参考答案。";
+    }
+
+    function showAnswerGate() {
+      document.getElementById("answerQuestion").textContent = `验证问题：${answerGate.text}`;
+      document.getElementById("answerGate").classList.add("open");
+      document.getElementById("answerCheckInput").value = "";
+      document.getElementById("answerReveal").textContent = "请先回答验证题。";
+    }
+
+    function verifyAndRevealAnswer() {
+      const value = Number(document.getElementById("answerCheckInput").value.trim());
+      const challenge = getActiveChallenge();
+      if (Number.isFinite(value) && value === answerGate.answer) {
+        document.getElementById("answerReveal").textContent = `参考答案：${challenge.reveal}`;
+      } else {
+        document.getElementById("answerReveal").textContent = "验证未通过，请重新计算后再试。";
+      }
+    }
+
+    renderPipeline();
+    renderThreats();
+    bindBusinessContextUpdates();
+    createAnswerGateQuestion();
+    renderChallengeButtons();
+    resetMediaLab();
+    resetClassicLab();
+  </script>
 </body>
 </html>
